@@ -4,10 +4,16 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-app.use(cors());
+
+// CORS পারমিশন আরও শক্তিশালী করা হয়েছে
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
+
 app.use(bodyParser.json());
 
-// আপনার নতুন টোকেন এবং আইডি এখানে আপডেট করা হলো
 const TELEGRAM_TOKEN = '8643806603:AAHsb0tIJEw1m6BI2o8HAAv2M06R0Ai1Lz8'; 
 const CHAT_ID = '7000704615'; 
 
@@ -38,11 +44,11 @@ app.post('/notify', async (req, res) => {
         res.status(200).send({ success: true });
     } catch (error) {
         console.error('Telegram Error:', error.response ? error.response.data : error.message);
-        res.status(500).send({ success: false });
+        res.status(500).send({ success: false, error: error.message });
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000; // Render সাধারণত ১০০০০ পোর্ট ব্যবহার করে
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
