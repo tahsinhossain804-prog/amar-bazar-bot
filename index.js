@@ -7,12 +7,12 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// আপনার টোকেন এবং আইডি এখানে বসানো হয়েছে
-const TELEGRAM_TOKEN = '7604473723:AAF9y7_9tq8Z7K773-y972q8z7k773'; 
-const CHAT_ID = '717305179';
+// আপনার নতুন টোকেন এবং আইডি এখানে আপডেট করা হলো
+const TELEGRAM_TOKEN = '8643806603:AAHsb0tIJEw1m6BI2o8HAAv2M06R0Ai1Lz8'; 
+const CHAT_ID = '7000704615'; 
 
 app.get('/', (req, res) => {
-    res.send('Amar Bazar Bot is Running Live!');
+    res.send('Amar Bazar Bot (TahsinwayBot) is Running Live!');
 });
 
 app.post('/notify', async (req, res) => {
@@ -21,10 +21,10 @@ app.post('/notify', async (req, res) => {
     const message = `
 🔔 **নতুন অর্ডার এসেছে!**
 ━━━━━━━━━━━━━━━━
-📦 **অর্ডার আইডি:** ${orderId}
-👤 **কাস্টমার:** ${customerName}
-💰 **মোট টাকা:** ${totalAmount} TK
-💳 **TrxID:** ${trxId}
+📦 **অর্ডার আইডি:** ${orderId || 'N/A'}
+👤 **কাস্টমার:** ${customerName || 'Guest'}
+💰 **মোট টাকা:** ${totalAmount || '0'} TK
+💳 **TrxID:** ${trxId || 'N/A'}
 ━━━━━━━━━━━━━━━━
 অ্যাডমিন প্যানেল চেক করুন।
     `;
@@ -35,10 +35,10 @@ app.post('/notify', async (req, res) => {
             text: message,
             parse_mode: 'Markdown'
         });
-        res.status(200).send({ success: true, message: 'Notification sent!' });
+        res.status(200).send({ success: true });
     } catch (error) {
-        console.error('Error sending message:', error.response ? error.response.data : error.message);
-        res.status(500).send({ success: false, error: 'Failed to send message' });
+        console.error('Telegram Error:', error.response ? error.response.data : error.message);
+        res.status(500).send({ success: false });
     }
 });
 
