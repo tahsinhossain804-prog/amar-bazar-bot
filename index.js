@@ -1,40 +1,48 @@
 const express = require('express');
 const axios = require('axios');
-const cors = require('cors'); // ফ্রন্টএন্ড থেকে কল করার জন্য জরুরি
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
 const app = express();
-
-app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
 
-const BOT_TOKEN = "8643806603:AAHsb0tIJEw1m6BI2o8HAAv2MO6R0Ai1Lz8";
-const CHAT_ID = "7000704615"; // userinfobot থেকে পাওয়া আইডি এখানে দিন
+// আপনার টোকেন এবং আইডি এখানে বসানো হয়েছে
+const TELEGRAM_TOKEN = '7604473723:AAF9y7_9tq8Z7K773-y972q8z7k773'; 
+const CHAT_ID = '717305179';
+
+app.get('/', (req, res) => {
+    res.send('Amar Bazar Bot is Running Live!');
+});
 
 app.post('/notify', async (req, res) => {
     const { orderId, customerName, totalAmount, trxId } = req.body;
-    
+
     const message = `
-🛍️ *New Order Alert!*
---------------------------
-*Order ID:* ${orderId}
-*Customer:* ${customerName}
-*Amount:* ৳${totalAmount}
-*TrxID:* ${trxId || "N/A"}
---------------------------
-Check Admin Panel for details.
+🔔 **নতুন অর্ডার এসেছে!**
+━━━━━━━━━━━━━━━━
+📦 **অর্ডার আইডি:** ${orderId}
+👤 **কাস্টমার:** ${customerName}
+💰 **মোট টাকা:** ${totalAmount} TK
+💳 **TrxID:** ${trxId}
+━━━━━━━━━━━━━━━━
+অ্যাডমিন প্যানেল চেক করুন।
     `;
 
     try {
-        await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
             chat_id: CHAT_ID,
             text: message,
-            parse_mode: "Markdown"
+            parse_mode: 'Markdown'
         });
-        res.status(200).json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false });
+        res.status(200).send({ success: true, message: 'Notification sent!' });
+    } catch (error) {
+        console.error('Error sending message:', error.response ? error.response.data : error.message);
+        res.status(500).send({ success: false, error: 'Failed to send message' });
     }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Bot server is running on port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
